@@ -1,21 +1,41 @@
+import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
+import { NativeBaseProvider } from 'native-base';
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet } from 'react-native';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
+import { Provider } from 'react-redux';
+import store from 'redux/stores';
+import HomeScreen from 'screens/home/HomeScreen';
+import GlobalStyles from 'utils/styles';
+
+const MyTheme = {
+  ...DefaultTheme,
+  colors: {
+    ...DefaultTheme.colors,
+    background: '#fff',
+    primary: 'rgb(255, 45, 85)',
+  },
+};
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <SafeAreaProvider style={[styles.root, GlobalStyles.AndroidSafeArea]}>
+      <Provider store={store}>
+        <NativeBaseProvider>
+          <NavigationContainer theme={MyTheme}>
+            <SafeAreaView/>
+            <HomeScreen />
+            <StatusBar style="auto" />
+          </NavigationContainer>
+        </NativeBaseProvider>
+      </Provider>
+    </SafeAreaProvider>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  root: {
     flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
