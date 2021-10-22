@@ -6,7 +6,7 @@ import { StyleSheet } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import store from 'redux/stores';
-import HomeScreen from 'screens/home/HomeScreen';
+import AboutScreen from 'screens/about/AboutScreen';
 import GlobalStyles from 'utils/styles';
 
 const MyTheme = {
@@ -24,8 +24,8 @@ export default function App() {
       <Provider store={store}>
         <NativeBaseProvider>
           <NavigationContainer theme={MyTheme}>
-            <SafeAreaView/>
-            <HomeScreen />
+            <SafeAreaView />
+            <AboutScreen />
             <StatusBar style="auto" />
           </NavigationContainer>
         </NativeBaseProvider>
