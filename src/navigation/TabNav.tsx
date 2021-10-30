@@ -113,13 +113,6 @@ const TabNav = (props: Props) => {
   );
 };
 
-const styles = StyleSheet.create({
-  btnContainer: {
-    width: '25%',
-    height: 60,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-});
+const styles = StyleSheet.create({});
 
 export default TabNav;

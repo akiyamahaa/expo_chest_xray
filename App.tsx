@@ -7,7 +7,7 @@ import { StyleSheet } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import store from 'redux/stores';
-import SignInScreen from 'screens/auth/SignInScreen';
+import HomeScreen from 'screens/home/HomeScreen';
 import GlobalStyles from 'utils/styles';
 
 const MyTheme = {
@@ -27,7 +27,7 @@ export default function App() {
           <NavigationContainer theme={MyTheme}>
             <SafeAreaView />
             <StatusBar style="auto" translucent backgroundColor="transparent" />
-            <SignInScreen />
+            <TabNav />
           </NavigationContainer>
         </NativeBaseProvider>
       </Provider>

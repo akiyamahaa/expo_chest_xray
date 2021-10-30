@@ -5,14 +5,14 @@ import { Ionicons } from '@expo/vector-icons';
 interface Props {
   title: string;
   onPress?: () => void;
+  showBackBtn?: boolean;
 }
 
 const Header = (props: Props) => {
-  const { title, onPress } = props;
+  const { title, onPress, showBackBtn = false } = props;
   return (
     <>
       <StatusBar backgroundColor="#3700B3" barStyle="light-content" />
-
       <Box safeAreaTop backgroundColor="#6200ee" />
 
       <HStack
@@ -23,16 +23,18 @@ const Header = (props: Props) => {
         alignItems="center"
       >
         <HStack position="absolute" left={0}>
-          <IconButton
-            onPress={onPress}
-            icon={
-              <Icon
-                size="sm"
-                as={<Ionicons name="ios-arrow-back-circle-outline" />}
-                color="white"
-              />
-            }
-          />
+          {showBackBtn && (
+            <IconButton
+              onPress={onPress}
+              icon={
+                <Icon
+                  size="sm"
+                  as={<Ionicons name="ios-arrow-back-circle-outline" />}
+                  color="white"
+                />
+              }
+            />
+          )}
         </HStack>
         <HStack>
           <Text color="white" fontSize="20" fontWeight="bold">
