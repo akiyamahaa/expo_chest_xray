@@ -61,6 +61,7 @@ const TabNav = (props: Props) => {
           borderRadius: 16,
         },
       }}
+      initialRouteName='Patient'
     >
       {TabArr.map((item, index) => (
         <Tab.Screen

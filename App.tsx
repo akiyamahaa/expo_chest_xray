@@ -7,7 +7,6 @@ import { StyleSheet } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import store from 'redux/stores';
-import HomeScreen from 'screens/home/HomeScreen';
 import GlobalStyles from 'utils/styles';
 
 const MyTheme = {

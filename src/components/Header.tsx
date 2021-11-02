@@ -1,6 +1,7 @@
 import { Box, HStack, Icon, IconButton, StatusBar, Text } from 'native-base';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
+import Colors from 'utils/Colors';
 
 interface Props {
   title: string;
@@ -12,11 +13,11 @@ const Header = (props: Props) => {
   const { title, onPress, showBackBtn = false } = props;
   return (
     <>
-      <StatusBar backgroundColor="#3700B3" barStyle="light-content" />
-      <Box safeAreaTop backgroundColor="#6200ee" />
+      <StatusBar backgroundColor={Colors.greenDark} barStyle="light-content" />
+      <Box safeAreaTop backgroundColor={Colors.green} />
 
       <HStack
-        bg="#6200ee"
+        bg={Colors.green}
         px="1"
         py="3"
         justifyContent="center"
@@ -37,7 +38,12 @@ const Header = (props: Props) => {
           )}
         </HStack>
         <HStack>
-          <Text color="white" fontSize="20" fontWeight="bold">
+          <Text
+            color="white"
+            fontSize="20"
+            fontWeight="bold"
+            textTransform="uppercase"
+          >
             {title}
           </Text>
         </HStack>

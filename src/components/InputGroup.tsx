@@ -1,4 +1,4 @@
-import { Box, Icon, IconButton, IInputProps, Input, Text } from 'native-base';
+import { Box, Icon, IconButton, IInputProps, Input } from 'native-base';
 import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import Colors from 'utils/Colors';
