@@ -1,4 +1,4 @@
-import { NativeStackScreenProps } from "@react-navigation/native-stack";
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export type PatientStackParamList = {
   PatientScreen: undefined;
@@ -6,4 +6,11 @@ export type PatientStackParamList = {
   PatientDetail: undefined;
 };
 
-export type PatientStackProps = NativeStackScreenProps<PatientStackParamList,'PatientScreen'>
+export type PatientStackProps = NativeStackScreenProps<PatientStackParamList>;
+
+export type RootStackParamList = {
+  AuthStack: undefined;
+  TabStack: undefined;
+};
+
+export type RootStackProps = NativeStackScreenProps<RootStackParamList>;

@@ -57,7 +57,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   welcomeContainer: {
-    marginTop: 20,
+    marginTop: 50,
     marginLeft: 20,
   },
   paddingBottom: {

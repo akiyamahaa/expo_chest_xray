@@ -29,6 +29,7 @@ const InputGroup = (props: Props) => {
           borderColor: Colors.green,
           color: '#000',
         }}
+        size="lg"
         textAlignVertical={multiline ? 'top' : 'center'}
         multiline={multiline}
         numberOfLines={numberOfLines}

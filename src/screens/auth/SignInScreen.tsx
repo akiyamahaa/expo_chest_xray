@@ -15,10 +15,13 @@ import {
   StyleSheet,
   TouchableWithoutFeedback,
 } from 'react-native';
+import { useNavigation } from '@react-navigation/core';
+import { RootStackProps } from 'navigation/interface';
 
 interface Props {}
 
 const SignInScreen = (props: Props) => {
+  const navigation = useNavigation<RootStackProps['navigation']>();
   const { height } = Dimensions.get('screen');
   const [username, setUsername] = useState('');
 
@@ -26,6 +29,7 @@ const SignInScreen = (props: Props) => {
 
   const login = () => {
     console.log(username, password);
+    navigation.navigate('TabStack');
   };
 
   return (

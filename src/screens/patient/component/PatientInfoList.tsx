@@ -1,6 +1,11 @@
 import { Box, Icon, Text } from 'native-base';
 import React, { useState } from 'react';
-import { Platform, StyleSheet, TouchableOpacity } from 'react-native';
+import {
+  Dimensions,
+  Platform,
+  StyleSheet,
+  TouchableOpacity,
+} from 'react-native';
 import Colors from 'utils/Colors';
 import PatientCard from './PatientCard';
 import GlobalStyles from 'utils/styles';
@@ -14,6 +19,7 @@ interface Props {}
 const PatientInfoList = (props: Props) => {
   const [date, setDate] = useState(new Date());
   const [showDate, setShowDate] = useState(false);
+  const { width } = Dimensions.get('screen');
 
   const onChangeDate = (event: any, selectedDate: any) => {
     const currentDate = selectedDate || date;
@@ -47,7 +53,7 @@ const PatientInfoList = (props: Props) => {
       <ContainerLayout>
         <Box width="90%">
           <PatientCard />
-          <Box style={styles.ruler} />
+          <Box style={[styles.ruler]}></Box>
         </Box>
         <Box width="90%">
           <PatientCard />
@@ -60,10 +66,9 @@ const PatientInfoList = (props: Props) => {
 
 const styles = StyleSheet.create({
   ruler: {
-    width: '100%',
-    height: 1,
-    borderBottomWidth: 0.6,
+    borderBottomWidth: 0.5,
     borderBottomColor: Colors.greenDark,
+    marginHorizontal: '5%',
   },
   dateContainer: {
     borderRadius: 8,

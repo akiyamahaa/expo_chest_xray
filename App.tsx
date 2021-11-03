@@ -1,6 +1,6 @@
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import { Box, NativeBaseProvider } from 'native-base';
+import { NativeBaseProvider } from 'native-base';
 import TabNav from 'navigation/TabNav';
 import React, { useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
@@ -10,6 +10,7 @@ import store from 'redux/stores';
 import GlobalStyles from 'utils/styles';
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
+import RootStack from 'navigation/RootStack';
 
 const MyTheme = {
   ...DefaultTheme,
@@ -51,7 +52,7 @@ export default function App() {
                 />
               </>
             )}
-            <TabNav />
+            <RootStack />
           </NavigationContainer>
         </NativeBaseProvider>
       </Provider>

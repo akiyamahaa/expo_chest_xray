@@ -74,7 +74,7 @@ const TabNav = (props: Props) => {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          height: 60,
+          height: 80,
           position: 'absolute',
           bottom: 12,
           right: 12,
