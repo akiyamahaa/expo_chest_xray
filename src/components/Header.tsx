@@ -2,6 +2,7 @@ import { Box, HStack, Icon, IconButton, StatusBar, Text } from 'native-base';
 import React from 'react';
 import { Ionicons } from '@expo/vector-icons';
 import Colors from 'utils/Colors';
+import { Platform } from 'react-native';
 
 interface Props {
   title: string;
@@ -13,9 +14,11 @@ const Header = (props: Props) => {
   const { title, onPress, showBackBtn = false } = props;
   return (
     <>
-      <StatusBar backgroundColor={Colors.greenDark} barStyle="light-content" />
-      <Box safeAreaTop backgroundColor={Colors.green} />
-
+      <StatusBar
+        backgroundColor={Colors.greenDark}
+        barStyle={Platform.OS === 'android' ? 'light-content' : 'dark-content'}
+      />
+      <Box backgroundColor={Colors.green} />
       <HStack
         bg={Colors.green}
         px="1"

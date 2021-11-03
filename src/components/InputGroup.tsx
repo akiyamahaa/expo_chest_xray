@@ -7,10 +7,12 @@ import { Entypo } from '@expo/vector-icons';
 interface Props extends IInputProps {
   text: string;
   setText: React.Dispatch<React.SetStateAction<string>>;
+  multiline?: boolean;
+  numberOfLines?: number;
 }
 
 const InputGroup = (props: Props) => {
-  const { text, setText } = props;
+  const { text, setText, multiline = false, numberOfLines = 1 } = props;
   const [showPassword, setShowPassword] = useState(false);
 
   const changeModeShow = () => {
@@ -27,6 +29,9 @@ const InputGroup = (props: Props) => {
           borderColor: Colors.green,
           color: '#000',
         }}
+        textAlignVertical={multiline ? 'top' : 'center'}
+        multiline={multiline}
+        numberOfLines={numberOfLines}
         secureTextEntry={props.type === 'password' ? !showPassword : false}
         InputRightElement={
           props.type === 'password' ? (

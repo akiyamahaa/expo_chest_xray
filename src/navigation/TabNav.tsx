@@ -1,12 +1,13 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Badge, Box, Image, Text } from 'native-base';
-import React from 'react';
-import { StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Keyboard, StyleSheet } from 'react-native';
 import HomeScreen from 'screens/home/HomeScreen';
 import NotificationScreen from 'screens/notification/NotificationScreen';
 import PatientScreen from 'screens/patient/PatientScreen';
 import ProfileScreen from 'screens/profile/ProfileScreen';
 import Colors from 'utils/Colors';
+import PatientStack from './PatientStack';
 
 interface Props {}
 
@@ -25,7 +26,7 @@ const TabArr = [
     label: 'Patient',
     activeIcon: require('assets/icon/patient-active.png'),
     inActiveIcon: require('assets/icon/patient-inactive.png'),
-    component: PatientScreen,
+    component: PatientStack,
   },
   {
     id: 3,
@@ -48,6 +49,26 @@ const TabArr = [
 const Tab = createBottomTabNavigator();
 
 const TabNav = (props: Props) => {
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      'keyboardDidShow',
+      () => {
+        setKeyboardVisible(true); // or some other action
+      }
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      'keyboardDidHide',
+      () => {
+        setKeyboardVisible(false); // or some other action
+      }
+    );
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
   return (
     <Tab.Navigator
       screenOptions={{
@@ -61,7 +82,7 @@ const TabNav = (props: Props) => {
           borderRadius: 16,
         },
       }}
-      initialRouteName='Patient'
+      initialRouteName="Home"
     >
       {TabArr.map((item, index) => (
         <Tab.Screen
@@ -74,31 +95,33 @@ const TabNav = (props: Props) => {
                 {item.label}
               </Text>
             ),
-            tabBarIcon: ({ focused }) => (
-              <Box>
-                <Image
-                  source={focused ? item.activeIcon : item.inActiveIcon}
-                  style={{ width: 32, height: 32 }}
-                  alt="image-icon"
-                />
-                {index == 2 && (
-                  <Badge
-                    style={{
-                      borderRadius: 15,
-                      height: 30,
-                      justifyContent: 'center',
-                      alignItems: 'center',
-                      position: 'absolute',
-                      right: -14,
-                      top: -10,
-                    }}
-                    colorScheme="success"
-                  >
-                    20
-                  </Badge>
-                )}
-              </Box>
-            ),
+
+            tabBarIcon: ({ focused }) =>
+              !isKeyboardVisible && (
+                <Box>
+                  <Image
+                    source={focused ? item.activeIcon : item.inActiveIcon}
+                    style={{ width: 32, height: 32 }}
+                    alt="image-icon"
+                  />
+                  {index == 2 && (
+                    <Badge
+                      style={{
+                        borderRadius: 15,
+                        height: 30,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        position: 'absolute',
+                        right: -14,
+                        top: -10,
+                      }}
+                      colorScheme="success"
+                    >
+                      20
+                    </Badge>
+                  )}
+                </Box>
+              ),
             tabBarItemStyle: {
               borderWidth: 0.3,
               borderColor: Colors.green,

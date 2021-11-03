@@ -5,6 +5,6 @@ export default StyleSheet.create({
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight : 0,
   },
   marginBottomTab: {
-    paddingBottom: 220,
+    marginBottom: 80,
   },
 });
