@@ -1,10 +1,9 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Badge, Box, Image, Text } from 'native-base';
 import React, { useState, useEffect } from 'react';
-import { Keyboard, StyleSheet } from 'react-native';
+import { Keyboard, Platform, StyleSheet } from 'react-native';
 import HomeScreen from 'screens/home/HomeScreen';
 import NotificationScreen from 'screens/notification/NotificationScreen';
-import PatientScreen from 'screens/patient/PatientScreen';
 import ProfileScreen from 'screens/profile/ProfileScreen';
 import Colors from 'utils/Colors';
 import PatientStack from './PatientStack';
@@ -74,7 +73,7 @@ const TabNav = (props: Props) => {
       screenOptions={{
         headerShown: false,
         tabBarStyle: {
-          height: 80,
+          height: Platform.OS === 'android' ? 60 : 80,
           position: 'absolute',
           bottom: 12,
           right: 12,

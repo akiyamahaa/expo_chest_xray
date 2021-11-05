@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "expo_template_app",
-    "slug": "expo_template_app",
+    "name": "chest_xray",
+    "slug": "chest_xray",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -13,9 +13,7 @@
     "updates": {
       "fallbackToCacheTimeout": 0
     },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
+    "assetBundlePatterns": ["**/*"],
     "ios": {
       "supportsTablet": true
     },

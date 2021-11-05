@@ -3,11 +3,14 @@ import { Dimensions, StyleSheet } from 'react-native';
 import React from 'react';
 import PatientOverview from './component/PatientOverview';
 import StatisChartHome from './component/StatisChartHome';
+import { RootState } from 'redux/stores';
+import { useSelector } from 'react-redux';
+import { IUserState } from 'redux/reducers/user.reducer';
 
 interface Props {}
 
 const HomeScreen = (props: Props) => {
-  // const { width, height } = Dimensions.get('screen');
+  const user = useSelector<RootState>((state) => state.user) as IUserState;
 
   return (
     <Box style={{}}>
@@ -23,8 +26,8 @@ const HomeScreen = (props: Props) => {
         <Text fontSize={18} color="#fefefe">
           Xin chào bác sĩ
         </Text>
-        <Text fontSize={22} color="#fefefe">
-          Nguyen Van A
+        <Text fontSize={22} color="#fefefe" textTransform="uppercase">
+          {user.fullname}
         </Text>
       </Box>
       <Box style={[styles.contentContainer, styles.paddingBottom]}>
@@ -53,7 +56,7 @@ const styles = StyleSheet.create({
   contentContainer: {
     borderTopLeftRadius: 40,
     borderTopRightRadius: 40,
-    marginTop: 120,
+    marginTop: 100,
     backgroundColor: '#fff',
   },
   welcomeContainer: {
@@ -61,7 +64,7 @@ const styles = StyleSheet.create({
     marginLeft: 20,
   },
   paddingBottom: {
-    paddingBottom: 220,
+    paddingBottom: 300,
   },
 });
 

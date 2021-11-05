@@ -1,8 +1,7 @@
+import React, { useState, useEffect, useRef } from 'react';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
 import { NativeBaseProvider } from 'native-base';
-import TabNav from 'navigation/TabNav';
-import React, { useState } from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
@@ -11,6 +10,7 @@ import GlobalStyles from 'utils/styles';
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import RootStack from 'navigation/RootStack';
+import LoadingScreen from 'screens/loading/LoadingScreen';
 
 const MyTheme = {
   ...DefaultTheme,
@@ -37,6 +37,7 @@ export default function App() {
       />
     );
   }
+
   return (
     <SafeAreaProvider style={[styles.root, GlobalStyles.AndroidSafeArea]}>
       <Provider store={store}>

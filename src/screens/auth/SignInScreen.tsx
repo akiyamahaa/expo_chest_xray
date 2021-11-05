@@ -14,22 +14,76 @@ import {
   Platform,
   StyleSheet,
   TouchableWithoutFeedback,
+  Animated,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/core';
 import { RootStackProps } from 'navigation/interface';
+import { useDispatch, useSelector } from 'react-redux';
+import { login } from 'redux/actions/user.action';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { AUTH_TOKEN } from 'utils/constants';
+import { ILogin, ILoginResponse } from 'utils/interfaces/auth.interface';
+import { IErrorState } from 'redux/reducers/error.reducer';
+import { RootState } from 'redux/stores';
 
 interface Props {}
 
+interface IForm {
+  label: string;
+  placeholder: string;
+  type: string;
+}
+
+const LoginForm: { [key: string]: IForm } = {
+  username: {
+    label: 'Tài khoản',
+    placeholder: 'Tài khoản ...',
+    type: 'text',
+  },
+  password: {
+    label: 'Mật khẩu',
+    placeholder: 'Mật khẩu ...',
+    type: 'password',
+  },
+};
+
 const SignInScreen = (props: Props) => {
+  // STATE REDUX
+  const error = useSelector<RootState>((state) => state.error) as IErrorState;
+
   const navigation = useNavigation<RootStackProps['navigation']>();
+  const dispatch = useDispatch();
   const { height } = Dimensions.get('screen');
-  const [username, setUsername] = useState('');
+  //STATE
+  const opacity = useState(new Animated.Value(0))[0];
 
-  const [password, setPassword] = useState('');
+  const [input, setInput] = useState<ILogin>({
+    username: '',
+    password: '',
+  });
 
-  const login = () => {
-    console.log(username, password);
-    navigation.navigate('TabStack');
+  const fadeInText = () => {
+    Animated.timing(opacity, {
+      toValue: 1,
+      duration: 500,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const onHandleLogin = async () => {
+    console.log(input.username, input.password);
+    const login_result = await dispatch(
+      login({
+        username: input.username,
+        password: input.password,
+      }) as any as ILoginResponse
+    );
+    if (login_result) {
+      await AsyncStorage.setItem(AUTH_TOKEN, login_result.token);
+      navigation.navigate('TabStack');
+    } else {
+      fadeInText();
+    }
   };
 
   return (
@@ -53,29 +107,40 @@ const SignInScreen = (props: Props) => {
                   Hãy đăng nhập tài khoản sau đây
                 </Text>
               </Box>
-              <Box>
-                <Text textTransform="capitalize" color="#bcbcbc" mb="2">
-                  Tài khoản
-                </Text>
-                <InputGroup
-                  placeholder="Tài khoản ..."
-                  text={username}
-                  setText={setUsername}
-                />
-              </Box>
-              <Box>
-                <Text textTransform="capitalize" color="#bcbcbc" mb="2">
-                  Mật khẩu
-                </Text>
-                <InputGroup
-                  placeholder="Mật khẩu ..."
-                  type="password"
-                  text={password}
-                  setText={setPassword}
-                />
+              {/* FORM LOGIN */}
+              {Object.keys(LoginForm).map((form) => (
+                <Box key={form}>
+                  <Text textTransform="capitalize" color="#bcbcbc" mb="2">
+                    {LoginForm[form].label}
+                  </Text>
+                  <InputGroup
+                    placeholder={LoginForm[form].placeholder}
+                    text={input[form as keyof ILogin]}
+                    setText={(text) => setInput({ ...input, [form]: text })}
+                    type={LoginForm[form].type}
+                  />
+                </Box>
+              ))}
+              {/* DISPLAY ERROR */}
+              {/* TODO: MAKE IT MORE PRO */}
+              <Box mb="2" alignItems="center">
+                <Animated.View
+                  style={{
+                    opacity: opacity,
+                    width: '90%',
+                  }}
+                >
+                  <Text
+                    color="red.700"
+                    textTransform="uppercase"
+                    textAlign="center"
+                  >
+                    {error.messages}
+                  </Text>
+                </Animated.View>
               </Box>
               <Box mt="4" mb="4">
-                <CustomButton title="Login" onPress={login} />
+                <CustomButton title="Login" onPress={onHandleLogin} />
               </Box>
             </Box>
           </Box>
