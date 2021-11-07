@@ -1,16 +1,57 @@
 import { Box, Image, ScrollView, Text } from 'native-base';
-import { Dimensions, StyleSheet } from 'react-native';
-import React from 'react';
+import { StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
 import PatientOverview from './component/PatientOverview';
 import StatisChartHome from './component/StatisChartHome';
 import { RootState } from 'redux/stores';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { IUserState } from 'redux/reducers/user.reducer';
+import { getAllPatientsCount } from 'redux/actions/care.action';
+import { EStatus } from 'utils/constants';
+import { useNavigation } from '@react-navigation/core';
 
 interface Props {}
 
 const HomeScreen = (props: Props) => {
   const user = useSelector<RootState>((state) => state.user) as IUserState;
+  const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const [stats, setStats] = useState({
+    total: 0,
+    progress: 0,
+    completed: 0,
+  });
+
+  const onGetStats = async () => {
+    const total_count = (await dispatch(getAllPatientsCount(user.id))) as any;
+    const progress_count = (await dispatch(
+      getAllPatientsCount(user.id, EStatus.IN_PROGRESS)
+    )) as any;
+    const completed_count = (await dispatch(
+      getAllPatientsCount(user.id, EStatus.COMPLETED)
+    )) as any;
+    setStats({
+      ...stats,
+      total: total_count.careNumber,
+      progress: progress_count.careNumber,
+      completed: completed_count.careNumber,
+    });
+  };
+
+  useEffect(() => {
+    const subscribe = navigation.addListener('focus', () => {
+      console.log('go subscribe');
+      onGetStats();
+    });
+
+    const unsubscribe = navigation.addListener('blur', () => {
+      setStats({ total: 0, progress: 0, completed: 0 });
+    });
+
+    return () => {
+      subscribe();
+    };
+  }, [navigation,user.id]);
 
   return (
     <Box style={{}}>
@@ -41,7 +82,7 @@ const HomeScreen = (props: Props) => {
         </Box>
         <ScrollView showsVerticalScrollIndicator={false}>
           <Box alignItems="center" mt="4">
-            <PatientOverview />
+            <PatientOverview stats={stats} />
           </Box>
           <Box alignItems="center">
             <StatisChartHome />

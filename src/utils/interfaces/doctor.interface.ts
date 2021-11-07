@@ -1,5 +1,5 @@
 export interface IDoctor {
-  id?: number;
+  id: number;
   username: string;
   password: string;
   fullname: string;

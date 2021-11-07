@@ -50,6 +50,7 @@ const ProfileScreen = (props: Props) => {
             {name}
           </Text>
           <Text fontSize={18}>{user.position}</Text>
+          <Text fontSize={18}>Liên hệ: {user.phone}</Text>
         </Box>
         <TouchableOpacity
           style={{ width: '90%', marginTop: 20 }}

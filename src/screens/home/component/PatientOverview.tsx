@@ -3,26 +3,33 @@ import React from 'react';
 import { StyleSheet } from 'react-native';
 import Colors from 'utils/Colors';
 
-interface Props {}
+interface Props {
+  stats: {
+    total: number;
+    progress: number;
+    completed: number;
+  };
+}
 
 const PatientOverview = (props: Props) => {
+  const { stats } = props;
   const infoPatient = [
     {
       id: 1,
       title: 'Số bệnh nhân',
-      quantity: 40,
+      quantity: stats.total || 0,
       color: '#fff',
     },
     {
       id: 2,
       title: 'Đang đợi chuẩn đoán',
-      quantity: 40,
+      quantity: stats.progress || 0,
       color: 'red.300',
     },
     {
       id: 3,
       title: 'Đã có kết quả',
-      quantity: 40,
+      quantity: stats.completed || 0,
       color: 'green.300',
     },
   ];

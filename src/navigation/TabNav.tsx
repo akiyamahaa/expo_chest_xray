@@ -121,6 +121,7 @@ const TabNav = (props: Props) => {
                   )}
                 </Box>
               ),
+
             tabBarItemStyle: {
               borderWidth: 0.3,
               borderColor: Colors.green,

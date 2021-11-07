@@ -9,7 +9,7 @@ interface Props {
 const ContainerLayout = (props: Props) => {
   const { children } = props;
   return (
-    <Box alignItems="center" style={GlobalStyles.marginBottomTab}>
+    <Box alignItems="center" style={GlobalStyles.marginBottomTab} width='100%'>
       {children}
     </Box>
   );

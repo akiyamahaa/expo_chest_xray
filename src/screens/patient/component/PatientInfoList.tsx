@@ -1,25 +1,33 @@
 import { Box, Icon, Text } from 'native-base';
-import React, { useState } from 'react';
-import {
-  Dimensions,
-  Platform,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Platform, StyleSheet, TouchableOpacity } from 'react-native';
 import Colors from 'utils/Colors';
 import PatientCard from './PatientCard';
-import GlobalStyles from 'utils/styles';
+import { IPatient } from 'utils/interfaces/patient.interface';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { Fontisto } from '@expo/vector-icons';
 import moment from 'moment';
 import ContainerLayout from 'components/ContainerLayout';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigation } from '@react-navigation/core';
+import { getPatientsByDate } from 'redux/actions/care.action';
+import { RootState } from 'redux/stores';
+import { IUserState } from 'redux/reducers/user.reducer';
 
 interface Props {}
 
 const PatientInfoList = (props: Props) => {
+  // REDUX STATE
+  const user = useSelector<RootState>((state) => state.user) as IUserState;
+  console.log(
+    '🚀 ~ file: PatientInfoList.tsx ~ line 22 ~ PatientInfoList ~ user',
+    user
+  );
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
   const [date, setDate] = useState(new Date());
   const [showDate, setShowDate] = useState(false);
-  const { width } = Dimensions.get('screen');
+  const [listPatient, setListPatient] = useState<IPatient[]>([]);
 
   const onChangeDate = (event: any, selectedDate: any) => {
     const currentDate = selectedDate || date;
@@ -27,6 +35,38 @@ const PatientInfoList = (props: Props) => {
 
     setDate(currentDate);
   };
+
+  const onHandleGetPatients = async (byDate: Date, doctorId: number) => {
+    const list = (await dispatch(
+      getPatientsByDate(byDate, doctorId)
+    )) as any as IPatient[];
+    setListPatient(list);
+  };
+
+  useEffect(() => {
+    const subscribe = navigation.addListener('focus', () => {
+      console.log('go subscribe');
+      onHandleGetPatients(date, user.id);
+    });
+
+    const unsubscribe = navigation.addListener('blur', () => {
+      console.log('go unsubscribe');
+      setListPatient([]);
+      setDate(new Date());
+    });
+
+    return () => {
+      subscribe();
+    };
+    // add two params to prevent get data from previous user_id
+  }, [navigation, user.id]);
+
+  useEffect(() => {
+    onHandleGetPatients(date, user.id);
+    return () => {
+      setListPatient([]);
+    };
+  }, [date]);
 
   return (
     <Box alignItems="center">
@@ -51,14 +91,12 @@ const PatientInfoList = (props: Props) => {
         </Text>
       </Box>
       <ContainerLayout>
-        <Box width="90%">
-          <PatientCard />
-          <Box style={[styles.ruler]}></Box>
-        </Box>
-        <Box width="90%">
-          <PatientCard />
-          <Box style={styles.ruler} />
-        </Box>
+        {listPatient.map((patient) => (
+          <Box width="90%" key={patient.id}>
+            <PatientCard data={patient} />
+            <Box style={[styles.ruler]}></Box>
+          </Box>
+        ))}
       </ContainerLayout>
     </Box>
   );
