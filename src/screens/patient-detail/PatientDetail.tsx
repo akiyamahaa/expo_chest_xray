@@ -1,22 +1,36 @@
 import Header from 'components/Header';
 import { Box, Button, Image, ScrollView, Text } from 'native-base';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Colors from 'utils/Colors';
 import ResultXray from './component/ResultXray';
 import XrayCard from './component/XrayCard';
-import { useNavigation } from '@react-navigation/core';
+import { useNavigation, useRoute } from '@react-navigation/core';
 import { PatientStackProps } from 'navigation/interface';
-import GlobalStyles from 'utils/styles';
 import ContainerLayout from 'components/ContainerLayout';
 import * as ImagePicker from 'expo-image-picker';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from 'redux/stores';
+import { IUserState } from 'redux/reducers/user.reducer';
+import { getProfileById } from 'redux/actions/patient.action';
+import { IPatient } from 'utils/interfaces/patient.interface';
+import { ConvertStatus, EStatus } from 'utils/constants';
 
 interface Props {}
 
 const PatientDetail = (props: Props) => {
-  const [showModal, setShowModal] = useState(false);
+  // REDUX
+  const user = useSelector<RootState>((state) => state.user) as IUserState;
+  // DISPATCH
+  const dispatch = useDispatch();
   const navigation = useNavigation<PatientStackProps['navigation']>();
+  const route = useRoute<any>();
+  // STATE
+  const [showModal, setShowModal] = useState(false);
+  const [patient, setPatient] = useState<IPatient>({} as IPatient);
+  // GET PARAMS
+  const patientId = route.params.patientId || '';
   const [image, setImage] = useState('');
 
   const activeModal = () => {
@@ -61,6 +75,19 @@ const PatientDetail = (props: Props) => {
     }
   };
 
+  useEffect(() => {
+    const getInfoPatient = async () => {
+      const profile = (await dispatch(getProfileById(patientId))) as any;
+      console.log(
+        '🚀 ~ file: PatientDetail.tsx ~ line 78 ~ getInfoPatient ~ profile',
+        profile
+      );
+      setPatient(profile.patient);
+    };
+    getInfoPatient();
+    return () => {};
+  }, []);
+
   return (
     <SafeAreaView>
       {showModal && (
@@ -77,15 +104,24 @@ const PatientDetail = (props: Props) => {
           <Box style={{ width: '90%' }} p="4">
             <Box style={styles.flexModel}>
               <Text style={styles.title}>Bệnh nhân</Text>
-              <Text style={styles.subTitle}>Nguyen Van A</Text>
+              <Text style={styles.subTitle}>{patient.fullname}</Text>
             </Box>
             <Box style={styles.flexModel}>
               <Text style={styles.title}>Bác sĩ phụ trách</Text>
-              <Text style={styles.subTitle}>Nguyen Van á</Text>
+              <Text style={styles.subTitle}>{user.fullname}</Text>
             </Box>
             <Box style={styles.flexModel}>
               <Text style={styles.title}>Trạng thái</Text>
-              <Text style={styles.subTitle}>Dương tính</Text>
+              <Text
+                style={styles.subTitle}
+                color={
+                  patient.status === EStatus.IN_PROGRESS
+                    ? 'yellow.500'
+                    : 'green.500'
+                }
+              >
+                {ConvertStatus[patient.status]}
+              </Text>
             </Box>
           </Box>
           {/* Upload Action */}
@@ -146,7 +182,6 @@ const styles = StyleSheet.create({
   },
   subTitle: {
     fontSize: 20,
-    color: Colors.textColor,
   },
 });
 

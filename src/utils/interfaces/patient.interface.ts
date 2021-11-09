@@ -1,9 +1,9 @@
 export interface IPatient {
-  id?: number;
+  id: number;
   fullname: string;
   phone: string;
   note: string;
-  status?: string;
+  status: string;
 }
 
 export interface IGetAllPatients {

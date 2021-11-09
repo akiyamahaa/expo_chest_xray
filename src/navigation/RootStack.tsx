@@ -72,7 +72,7 @@ const RootStack = (props: Props) => {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName="TabStack"
+      initialRouteName="Loading"
     >
       <Stack.Screen name="Loading" component={LoadingScreen} />
       <Stack.Screen name="AuthStack" component={AuthStack} />

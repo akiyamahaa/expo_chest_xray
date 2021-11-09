@@ -34,3 +34,21 @@ export const getAllPatientsCount =
         params: { doctorId, statusPatient },
       },
     });
+
+export enum GetStatsCareKeys {
+  GET_STATS_CARES_REQ = 'GET_STATS_CARES_REQ',
+  GET_STATS_CARES_SUCCESS = 'GET_STATS_CARES_SUCCESS',
+  GET_STATS_CARES_FAILURE = 'GET_STATS_CARES_FAILURE',
+}
+
+export const getStatsCares =
+  (doctorId: number) =>
+  (dispatch: Dispatch): Promise<{ [key: string]: ICare[] }> =>
+    dispatchApi(dispatch, {
+      types: Object.keys(GetStatsCareKeys),
+      method: 'get',
+      endpoint: '/cares/stats',
+      body: {
+        params: { doctorId },
+      },
+    });

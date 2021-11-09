@@ -1,12 +1,61 @@
 import { Box, Text } from 'native-base';
-import React from 'react';
-import { Dimensions, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { StyleSheet } from 'react-native';
 import { VictoryBar, VictoryChart } from 'victory-native';
 import Colors from 'utils/Colors';
+import moment from 'moment';
+import { useDispatch, useSelector } from 'react-redux';
+import { getStatsCares } from 'redux/actions/care.action';
+import { RootState } from 'redux/stores';
+import { IUserState } from 'redux/reducers/user.reducer';
+import { useNavigation } from '@react-navigation/core';
+import { ICare } from 'utils/interfaces/care.interface';
 
 interface Props {}
 
+const getMonthName = (num: number = 0) =>
+  moment().subtract(num, 'month').format('MMM');
+
 const StatisChartHome = (props: Props) => {
+  // REDUX STATE
+  const user = useSelector<RootState>((state) => state.user) as IUserState;
+  // HOOKS
+  const dispatch = useDispatch();
+  const navigation = useNavigation();
+  const categoriesMonth = [
+    getMonthName(5),
+    getMonthName(4),
+    getMonthName(3),
+    getMonthName(2),
+    getMonthName(1),
+    getMonthName(),
+  ];
+  const [stats, setStats] = useState<{ [key: string]: ICare[] }>({});
+
+  const onHandleGetStatsCare = async () => {
+    const result: any = await dispatch(getStatsCares(user.id));
+    setStats(result);
+  };
+
+  useEffect(() => {
+    const subscribe = navigation.addListener('focus', () => {
+      onHandleGetStatsCare();
+    });
+
+    const unsubscribe = navigation.addListener('blur', () => {
+      setStats({});
+    });
+
+    return () => {
+      subscribe();
+    };
+  }, [navigation, user.id]);
+
+  const dataChart = categoriesMonth.map((month) => ({
+    x: month,
+    y: (stats[month] && stats[month].length) || 0,
+  }));
+
   return (
     <Box style={{ width: '90%' }}>
       <Text fontSize={22} bold color={Colors.green}>
@@ -15,15 +64,9 @@ const StatisChartHome = (props: Props) => {
       <VictoryChart domainPadding={25}>
         <VictoryBar
           categories={{
-            x: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+            x: categoriesMonth,
           }}
-          data={[
-            { x: 'Jan', y: 5 },
-            { x: 'Feb', y: 44 },
-            { x: 'Mar', y: 12 },
-            { x: 'Apr', y: 33 },
-            { x: 'May', y: 12 },
-          ]}
+          data={dataChart}
           style={{
             data: {
               fill: Colors.greenDark,

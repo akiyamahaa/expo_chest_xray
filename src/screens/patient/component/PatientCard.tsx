@@ -16,7 +16,7 @@ const PatientCard = (props: Props) => {
   const navigation = useNavigation<PatientStackProps['navigation']>();
 
   const navigatePatientDetail = () => {
-    navigation.navigate('PatientDetail');
+    navigation.navigate('PatientDetail', { patientId: data.id });
   };
   const name = data.fullname;
   return (

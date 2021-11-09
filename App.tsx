@@ -10,7 +10,10 @@ import GlobalStyles from 'utils/styles';
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
 import RootStack from 'navigation/RootStack';
-import LoadingScreen from 'screens/loading/LoadingScreen';
+import moment from 'moment';
+// UPDATE MOMENT
+moment.updateLocale('vi', null);
+
 
 const MyTheme = {
   ...DefaultTheme,

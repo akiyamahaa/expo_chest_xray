@@ -19,10 +19,7 @@ interface Props {}
 const PatientInfoList = (props: Props) => {
   // REDUX STATE
   const user = useSelector<RootState>((state) => state.user) as IUserState;
-  console.log(
-    '🚀 ~ file: PatientInfoList.tsx ~ line 22 ~ PatientInfoList ~ user',
-    user
-  );
+
   const dispatch = useDispatch();
   const navigation = useNavigation();
   const [date, setDate] = useState(new Date());
