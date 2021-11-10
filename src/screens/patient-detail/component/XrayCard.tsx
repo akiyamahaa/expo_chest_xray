@@ -5,17 +5,18 @@ import Colors from 'utils/Colors';
 
 interface Props {
   onPress: () => void;
+  image_uri: string;
 }
 
 const XrayCard = (props: Props) => {
-  const { onPress } = props;
+  const { onPress, image_uri } = props;
   return (
     <TouchableOpacity onPress={onPress}>
       <Box style={styles.root}>
         <Box style={styles.imageStyle}>
           <Image
             source={{
-              uri: 'https://images.unsplash.com/photo-1453728013993-6d66e9c9123a?ixid=MnwxMjA3fDB8MHxzZWFyY2h8Mnx8dmlld3xlbnwwfHwwfHw%3D&ixlib=rb-1.2.1&w=1000&q=80',
+              uri: image_uri,
             }}
             alt="image-xray"
             style={styles.imageStyle}

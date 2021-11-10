@@ -16,9 +16,12 @@ import { IUserState } from 'redux/reducers/user.reducer';
 import { getProfileById } from 'redux/actions/patient.action';
 import { IPatient } from 'utils/interfaces/patient.interface';
 import { ConvertStatus, EStatus } from 'utils/constants';
+import axios from 'axios';
+import getEnvVars from 'redux/enviroment';
+import { getXrayImage } from 'redux/actions/xray.action';
 
 interface Props {}
-
+const { API_BASE_URL } = getEnvVars();
 const PatientDetail = (props: Props) => {
   // REDUX
   const user = useSelector<RootState>((state) => state.user) as IUserState;
@@ -28,13 +31,46 @@ const PatientDetail = (props: Props) => {
   const route = useRoute<any>();
   // STATE
   const [showModal, setShowModal] = useState(false);
+  const [image, setImage] = useState(false);
   const [patient, setPatient] = useState<IPatient>({} as IPatient);
+  const [listXray, setListXray] = useState([]);
   // GET PARAMS
   const patientId = route.params.patientId || '';
-  const [image, setImage] = useState('');
 
   const activeModal = () => {
     setShowModal(true);
+  };
+
+  const onGetXrayInput = async () => {
+    const xray_result: any = await dispatch(getXrayImage(patientId));
+    setListXray(xray_result);
+  };
+  const getInfoPatient = async () => {
+    const profile = (await dispatch(getProfileById(patientId))) as any;
+    setPatient(profile.patient);
+  };
+
+  const onHandleUpload = async (image_uri: any) => {
+    let localUri = image_uri;
+    let filename = localUri.split('/').pop();
+    // Infer the type of the image
+    let match = /\.(\w+)$/.exec(filename);
+    let type = match ? `image/${match[1]}` : `image`;
+    // Upload the image using the fetch and FormData APIs
+    let formData: any = new FormData();
+    // Assume "photo" is the name of the form field the server expects
+    formData.append('patientId', patientId);
+    formData.append('image', { uri: localUri, name: filename, type });
+    await axios
+      .create({
+        baseURL: API_BASE_URL,
+        headers: {
+          Authorization: user.token ? `Bearer ${user.token}` : '',
+          contentType: 'multipart/form-data',
+        },
+      })
+      .post('/uploads', formData);
+    setImage(!image);
   };
 
   const pickImage = async () => {
@@ -53,7 +89,7 @@ const PatientDetail = (props: Props) => {
     });
 
     if (!result.cancelled) {
-      setImage(result.uri);
+      onHandleUpload(result.uri);
     }
   };
 
@@ -71,22 +107,36 @@ const PatientDetail = (props: Props) => {
       quality: 1,
     });
     if (!result.cancelled) {
-      setImage(result.uri);
+      onHandleUpload(result.uri);
     }
   };
 
   useEffect(() => {
-    const getInfoPatient = async () => {
-      const profile = (await dispatch(getProfileById(patientId))) as any;
-      console.log(
-        '🚀 ~ file: PatientDetail.tsx ~ line 78 ~ getInfoPatient ~ profile',
-        profile
-      );
-      setPatient(profile.patient);
+    const subscribe = navigation.addListener('focus', () => {
+      onGetXrayInput();
+      getInfoPatient();
+    });
+
+    const unsubscribe = navigation.addListener('blur', () => {
+      setPatient({} as IPatient);
+      setListXray([]);
+    });
+
+    return () => {
+      subscribe();
     };
-    getInfoPatient();
-    return () => {};
-  }, []);
+  }, [navigation, image]);
+
+  useEffect(() => {
+    let isCancelled = false;
+    if (!isCancelled) {
+      onGetXrayInput();
+    }
+    return () => {
+      isCancelled = true;
+      setListXray([]);
+    };
+  }, [image]);
 
   return (
     <SafeAreaView>
@@ -142,26 +192,28 @@ const PatientDetail = (props: Props) => {
                 Tải ảnh
               </Button>
             </Button.Group>
-            {image && (
+            {/* {image && (
               <Image
                 source={{ uri: image }}
                 style={{ height: 200, resizeMode: 'contain' }}
                 alt="image-input"
                 key={image}
               />
-            )}
+            )} */}
           </Box>
           {/* List Card Result */}
           <Box width="90%">
-            <Box mb="4">
+            {listXray.map((item: any) => (
+              <Box mb="4" key={item.id}>
+                <XrayCard
+                  onPress={activeModal}
+                  image_uri={`${API_BASE_URL}/${item.filepath}`}
+                />
+              </Box>
+            ))}
+            {/* <Box mb="4">
               <XrayCard onPress={activeModal} />
-            </Box>
-            <Box mb="4">
-              <XrayCard onPress={activeModal} />
-            </Box>
-            <Box mb="4">
-              <XrayCard onPress={activeModal} />
-            </Box>
+            </Box> */}
           </Box>
         </ContainerLayout>
       </ScrollView>
