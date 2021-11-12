@@ -32,7 +32,7 @@ const PatientCreateForm = (props: Props) => {
   const disableButton = !fullname || !phone;
 
   const createProfile = async () => {
-    // TODO: API CREATE HERE
+    // API CREATE HERE
     const patientData = {
       fullname,
       phone,
@@ -41,7 +41,6 @@ const PatientCreateForm = (props: Props) => {
     const create_result = (await dispatch(
       createPatient(patientData, user.id)
     )) as any as IPatient;
-    console.log("🚀 ~ file: PatientCreateForm.tsx ~ line 44 ~ createProfile ~ create_result", create_result)
     if (create_result) {
       toast.show({
         status: 'success',

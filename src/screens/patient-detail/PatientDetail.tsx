@@ -112,29 +112,23 @@ const PatientDetail = (props: Props) => {
   };
 
   useEffect(() => {
-    const subscribe = navigation.addListener('focus', () => {
+    const unsubscribe = navigation.addListener('focus', () => {
       onGetXrayInput();
       getInfoPatient();
     });
 
-    const unsubscribe = navigation.addListener('blur', () => {
-      setPatient({} as IPatient);
-      setListXray([]);
-    });
-
-    return () => {
-      subscribe();
-    };
+    return unsubscribe;
   }, [navigation, image]);
 
+  // GET new image after upload
   useEffect(() => {
-    let isCancelled = false;
-    if (!isCancelled) {
+    // CHECK MOUNT - UNMOUNT
+    let isUnMount = false;
+    if (!isUnMount) {
       onGetXrayInput();
     }
     return () => {
-      isCancelled = true;
-      setListXray([]);
+      isUnMount = true;
     };
   }, [image]);
 
@@ -192,14 +186,6 @@ const PatientDetail = (props: Props) => {
                 Tải ảnh
               </Button>
             </Button.Group>
-            {/* {image && (
-              <Image
-                source={{ uri: image }}
-                style={{ height: 200, resizeMode: 'contain' }}
-                alt="image-input"
-                key={image}
-              />
-            )} */}
           </Box>
           {/* List Card Result */}
           <Box width="90%">
@@ -207,13 +193,10 @@ const PatientDetail = (props: Props) => {
               <Box mb="4" key={item.id}>
                 <XrayCard
                   onPress={activeModal}
-                  image_uri={`${API_BASE_URL}/${item.filepath}`}
+                  image_uri={`${API_BASE_URL}/uploads/${item.filepath}`}
                 />
               </Box>
             ))}
-            {/* <Box mb="4">
-              <XrayCard onPress={activeModal} />
-            </Box> */}
           </Box>
         </ContainerLayout>
       </ScrollView>

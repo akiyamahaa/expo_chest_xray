@@ -42,12 +42,10 @@ const PatientInfoList = (props: Props) => {
 
   useEffect(() => {
     const subscribe = navigation.addListener('focus', () => {
-      console.log('go subscribe');
       onHandleGetPatients(date, user.id);
     });
 
     const unsubscribe = navigation.addListener('blur', () => {
-      console.log('go unsubscribe');
       setListPatient([]);
       setDate(new Date());
     });

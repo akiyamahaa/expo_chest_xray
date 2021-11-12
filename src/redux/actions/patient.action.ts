@@ -1,6 +1,6 @@
 import dispatchApi from './dispatchApi';
 import { Dispatch } from 'redux';
-import { IPatient } from 'utils/interfaces/patient.interface';
+import { ICreatePatient, IPatient } from 'utils/interfaces/patient.interface';
 import { IXrayInput } from 'utils/interfaces/xrayInput.interface';
 
 export enum CreateProfilePatientKeys {
@@ -10,7 +10,7 @@ export enum CreateProfilePatientKeys {
 }
 
 export const createPatient =
-  (patientData: IPatient, doctorId: number) =>
+  (patientData: ICreatePatient, doctorId: number) =>
   (dispatch: Dispatch): Promise<IPatient> =>
     dispatchApi(dispatch, {
       types: Object.keys(CreateProfilePatientKeys),

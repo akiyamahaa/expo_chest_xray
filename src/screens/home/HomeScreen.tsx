@@ -39,8 +39,8 @@ const HomeScreen = (props: Props) => {
   };
 
   useEffect(() => {
+
     const subscribe = navigation.addListener('focus', () => {
-      console.log('go subscribe');
       onGetStats();
     });
 

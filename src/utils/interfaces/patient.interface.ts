@@ -6,6 +6,12 @@ export interface IPatient {
   status: string;
 }
 
+export interface ICreatePatient{
+  fullname: string;
+  phone: string;
+  note: string;
+}
+
 export interface IGetAllPatients {
   page?: number;
 }
