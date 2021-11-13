@@ -1,7 +1,7 @@
-import { IXrayOutput } from '@interfaces/xrayOutput.interface';
+import { IXrayOutput } from "./xrayOutput.interface";
 
 export interface IXrayInput {
-  id?: number;
+  id: number;
   patientId?: number;
   xrayOutputId?: number;
   xrayOutput?: IXrayOutput;

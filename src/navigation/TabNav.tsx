@@ -1,12 +1,22 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Badge, Box, Image, Text } from 'native-base';
 import React, { useState, useEffect } from 'react';
 import { Keyboard, Platform, StyleSheet } from 'react-native';
+import { useDispatch, useSelector } from 'react-redux';
+import { createDevice } from 'redux/actions/device.action';
+import { IUserState } from 'redux/reducers/user.reducer';
+import { RootState } from 'redux/stores';
+import * as Notifications from 'expo-notifications';
 import HomeScreen from 'screens/home/HomeScreen';
 import NotificationScreen from 'screens/notification/NotificationScreen';
 import ProfileScreen from 'screens/profile/ProfileScreen';
 import Colors from 'utils/Colors';
+import { EXPO_TOKEN } from 'utils/constants';
+import { registerForPushNotificationsAsync } from 'utils/notification';
 import PatientStack from './PatientStack';
+import { useNavigation } from '@react-navigation/core';
+import { TabStackProps } from './interface';
 
 interface Props {}
 
@@ -45,10 +55,25 @@ const TabArr = [
   },
 ];
 
+Notifications.setNotificationHandler({
+  handleNotification: async () => ({
+    shouldShowAlert: true,
+    shouldPlaySound: false,
+    shouldSetBadge: false,
+  }),
+});
+
 const Tab = createBottomTabNavigator();
 
 const TabNav = (props: Props) => {
+  // DISPATCH
+  const dispatch = useDispatch();
+  // STATE
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
+  // REDUX
+  const user = useSelector<RootState>((state) => state.user) as IUserState;
+  // NAVIGATION
+  const navigation = useNavigation<TabStackProps['navigation']>();
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -63,7 +88,42 @@ const TabNav = (props: Props) => {
         setKeyboardVisible(false); // or some other action
       }
     );
+    const getExpoToken = async () => {
+      const expoPushToken = await AsyncStorage.getItem(EXPO_TOKEN);
+      if (!expoPushToken) {
+        const token: any = await registerForPushNotificationsAsync();
+        await AsyncStorage.setItem(EXPO_TOKEN, token);
+        const deviceData = {
+          doctorId: user.id,
+          token,
+        };
+        console.log(deviceData);
+        await dispatch(createDevice(deviceData));
+      }
+    };
+    getExpoToken();
+    // This listener is fired whenever a notification is received while the app is foregrounded
+    const notificationListener = Notifications.addNotificationReceivedListener(
+      (notification) => {
+        // console.log(
+        //   '🚀 ~ file: TabNav.tsx ~ line 108 ~ useEffect ~ notification',
+        //   notification
+        // );
+      }
+    );
+    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+    const responseListener =
+      Notifications.addNotificationResponseReceivedListener((response) => {
+        const { data }: any = response.notification.request.content;
+        navigation.navigate('Patient', {
+          screen: 'PatientDetail',
+          params: { patientId: data.patientId },
+        });
+      });
+
     return () => {
+      Notifications.removeNotificationSubscription(notificationListener);
+      Notifications.removeNotificationSubscription(responseListener);
       keyboardDidHideListener.remove();
       keyboardDidShowListener.remove();
     };

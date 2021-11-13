@@ -18,7 +18,8 @@ import { IPatient } from 'utils/interfaces/patient.interface';
 import { ConvertStatus, EStatus } from 'utils/constants';
 import axios from 'axios';
 import getEnvVars from 'redux/enviroment';
-import { getXrayImage } from 'redux/actions/xray.action';
+import { getXrayDiagnosis, getXrayImage } from 'redux/actions/xray.action';
+import { IXrayInput } from 'utils/interfaces/xrayInput.interface';
 
 interface Props {}
 const { API_BASE_URL } = getEnvVars();
@@ -33,7 +34,7 @@ const PatientDetail = (props: Props) => {
   const [showModal, setShowModal] = useState(false);
   const [image, setImage] = useState(false);
   const [patient, setPatient] = useState<IPatient>({} as IPatient);
-  const [listXray, setListXray] = useState([]);
+  const [listXray, setListXray] = useState<any>({});
   // GET PARAMS
   const patientId = route.params.patientId || '';
 
@@ -42,8 +43,36 @@ const PatientDetail = (props: Props) => {
   };
 
   const onGetXrayInput = async () => {
-    const xray_result: any = await dispatch(getXrayImage(patientId));
-    setListXray(xray_result);
+    const xray_result: IXrayInput[] = (await dispatch(
+      getXrayImage(patientId)
+    )) as any as IXrayInput[];
+    // Convert xray arr -> xray obj with xrayInputId as key
+    const xray_obj: any = xray_result.reduce(
+      (obj, current) => ({
+        ...obj,
+        [current.id]: current,
+      }),
+      {}
+    );
+    const xray_diagnosis: any = await Promise.all(
+      xray_result.map((xray_item) => dispatch(getXrayDiagnosis(xray_item.id)))
+    );
+    // Add info diagnosis to xray obj
+    const input_diagnosis_obj: any = xray_diagnosis.reduce(
+      (obj: any, current: any) => {
+        if (xray_obj[current[0].id]) {
+          return {
+            ...obj,
+            [current[0].id]: {
+              ...xray_obj[current[0].id],
+              ...current[0],
+            },
+          };
+        }
+      },
+      xray_obj
+    );
+    setListXray(input_diagnosis_obj);
   };
   const getInfoPatient = async () => {
     const profile = (await dispatch(getProfileById(patientId))) as any;
@@ -189,12 +218,9 @@ const PatientDetail = (props: Props) => {
           </Box>
           {/* List Card Result */}
           <Box width="90%">
-            {listXray.map((item: any) => (
-              <Box mb="4" key={item.id}>
-                <XrayCard
-                  onPress={activeModal}
-                  image_uri={`${API_BASE_URL}/uploads/${item.filepath}`}
-                />
+            {Object.keys(listXray).map((item: any) => (
+              <Box mb="4" key={item}>
+                <XrayCard onPress={activeModal} data={listXray[item]} />
               </Box>
             ))}
           </Box>

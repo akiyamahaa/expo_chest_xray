@@ -11,7 +11,7 @@ import { logout } from 'redux/actions/user.action';
 import { IUserState } from 'redux/reducers/user.reducer';
 import { RootState } from 'redux/stores';
 import Colors from 'utils/Colors';
-import { AUTH_TOKEN } from 'utils/constants';
+import { AUTH_TOKEN, EXPO_TOKEN } from 'utils/constants';
 import { IDoctor } from 'utils/interfaces/doctor.interface';
 
 interface Props {}
@@ -33,6 +33,7 @@ const ProfileScreen = (props: Props) => {
     };
     await dispatch(logout(logoutData));
     await AsyncStorage.removeItem(AUTH_TOKEN);
+    await AsyncStorage.removeItem(EXPO_TOKEN);
     navigation.navigate('AuthStack');
   };
 

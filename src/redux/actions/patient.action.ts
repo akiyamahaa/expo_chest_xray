@@ -1,7 +1,6 @@
 import dispatchApi from './dispatchApi';
 import { Dispatch } from 'redux';
 import { ICreatePatient, IPatient } from 'utils/interfaces/patient.interface';
-import { IXrayInput } from 'utils/interfaces/xrayInput.interface';
 
 export enum CreateProfilePatientKeys {
   CREATE_PROFILE_PATIENT_REQ = 'CREATE_PROFILE_PATIENT_REQ',

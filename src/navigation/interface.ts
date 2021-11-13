@@ -1,3 +1,5 @@
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
+import { NavigatorScreenParams } from '@react-navigation/core';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 
 export type PatientStackParamList = {
@@ -15,3 +17,12 @@ export type RootStackParamList = {
 };
 
 export type RootStackProps = NativeStackScreenProps<RootStackParamList>;
+
+export type TabParamList = {
+  Home: undefined;
+  Patient: NavigatorScreenParams<PatientStackParamList>;
+  Notification: undefined;
+  Profile: undefined;
+};
+
+export type TabStackProps = BottomTabScreenProps<TabParamList>;

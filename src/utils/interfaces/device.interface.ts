@@ -8,3 +8,8 @@ export interface IDevice {
 export interface IGetAllDevices {
   page?: number;
 }
+
+export interface ICreateDevice {
+  doctorId: number;
+  token: string;
+}

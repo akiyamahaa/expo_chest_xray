@@ -1,24 +1,6 @@
 import dispatchApi from './dispatchApi';
 import { Dispatch } from 'redux';
 
-// export enum UploadFileKeys {
-//   UPLOAD_FILE_REQ = 'UPLOAD_FILE_REQ',
-//   UPLOAD_FILE_SUCCESS = 'UPLOAD_FILE_SUCCESS',
-//   UPLOAD_FILE_FAILURE = 'UPLOAD_FILE_FAILURE',
-// }
-
-// export const uploadXrayImage =
-//   (patientId: number, image: any) =>
-//   (dispatch: Dispatch): Promise<any> =>
-//     dispatchApi(dispatch, {
-//       types: Object.keys(UploadFileKeys),
-//       method: 'post',
-//       endpoint: '/uploads',
-//       body: {
-//         params: { patientId, image },
-//       },
-//     });
-
 export enum GetXrayInputKeys {
   GET_XRAY_INPUT_REQ = 'GET_XRAY_INPUT_REQ',
   GET_XRAY_INPUT_SUCCESS = 'GET_XRAY_INPUT_SUCCESS',
@@ -34,5 +16,23 @@ export const getXrayImage =
       endpoint: '/uploads',
       body: {
         params: { patientId },
+      },
+    });
+
+export enum GetXrayDiagnosisKeys {
+  GET_XRAY_DIAGNOSIS_REQ = 'GET_XRAY_DIAGNOSIS_REQ',
+  GET_XRAY_DIAGNOSIS_SUCCESS = 'GET_XRAY_DIAGNOSIS_SUCCESS',
+  GET_XRAY_DIAGNOSIS_FAILURE = 'GET_XRAY_DIAGNOSIS_FAILURE',
+}
+
+export const getXrayDiagnosis =
+  (xrayInputId: number) =>
+  (dispatch: Dispatch): Promise<any> =>
+    dispatchApi(dispatch, {
+      types: Object.keys(GetXrayDiagnosisKeys),
+      method: 'get',
+      endpoint: '/xrayDiagnosis/getById',
+      body: {
+        params: { xrayInputId },
       },
     });

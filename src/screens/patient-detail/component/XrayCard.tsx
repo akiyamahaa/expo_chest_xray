@@ -1,30 +1,91 @@
 import { Box, Image, Text } from 'native-base';
 import React from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
+import getEnvVars from 'redux/enviroment';
 import Colors from 'utils/Colors';
 
 interface Props {
   onPress: () => void;
-  image_uri: string;
+  data: any;
 }
-
+const { API_BASE_URL } = getEnvVars();
 const XrayCard = (props: Props) => {
-  const { onPress, image_uri } = props;
+  const { onPress, data } = props;
+  const {
+    atypicalAppearance,
+    indeterminateAppearance,
+    negativePneumonia,
+    typicalAppearance,
+  } = data;
+  const max_value = Math.max(
+    atypicalAppearance,
+    indeterminateAppearance,
+    negativePneumonia,
+    typicalAppearance
+  );
+  const symptom_list: {
+    [key: string]: {
+      name: string;
+      value: number;
+      color: string;
+    };
+  } = {
+    atypicalAppearance: {
+      name: 'Atypical',
+      value: atypicalAppearance,
+      color: max_value === atypicalAppearance ? 'red.700' : '#000',
+    },
+    indeterminateAppearance: {
+      name: 'Indeterminate',
+      value: indeterminateAppearance,
+      color: max_value === indeterminateAppearance ? 'red.700' : '#000',
+    },
+    negativePneumonia: {
+      name: 'Negative Pneumonia',
+      value: negativePneumonia,
+      color: max_value === negativePneumonia ? 'red.700' : '#000',
+    },
+    typicalAppearance: {
+      name: 'Typical',
+      value: typicalAppearance,
+      color: max_value === typicalAppearance ? 'red.700' : '#000',
+    },
+  };
+
+  console.log(
+    '🚀 ~ file: XrayCard.tsx ~ line 20 ~ XrayCard ~ symptom_list',
+    symptom_list
+  );
+
   return (
     <TouchableOpacity onPress={onPress}>
       <Box style={styles.root}>
         <Box style={styles.imageStyle}>
           <Image
             source={{
-              uri: image_uri,
+              uri: `${API_BASE_URL}/uploads/${data.filepath}`,
             }}
             alt="image-xray"
             style={styles.imageStyle}
           />
         </Box>
-        <Box p="4">
-          <Text>ABC XYZ</Text>
-          <Text>ABC XYZ</Text>
+        <Box flexDirection="row" justifyContent="space-between" flexWrap="wrap">
+          {Object.keys(symptom_list).map((item) => (
+            <Box
+              p="4"
+              alignItems="center"
+              key={item}
+              width="50%"
+              borderWidth={0.5}
+            >
+              <Text fontSize={14} bold>
+                {symptom_list[item].name}
+              </Text>
+              <Text fontSize={16} color={symptom_list[item].color}>
+                {symptom_list[item].value}
+              </Text>
+            </Box>
+          ))}
         </Box>
       </Box>
     </TouchableOpacity>
@@ -34,9 +95,9 @@ const XrayCard = (props: Props) => {
 const styles = StyleSheet.create({
   root: {
     borderWidth: 0.5,
-    borderRadius: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     width: '100%',
-    paddingBottom: 20,
     borderColor: Colors.green,
   },
   imageStyle: {
