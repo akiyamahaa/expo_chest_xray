@@ -17,6 +17,8 @@ import { registerForPushNotificationsAsync } from 'utils/notification';
 import PatientStack from './PatientStack';
 import { useNavigation } from '@react-navigation/core';
 import { TabStackProps } from './interface';
+import { setDiagnosisStatus } from 'redux/actions/xrayDiagnosis.action';
+import { getCountUnseen } from 'redux/actions/notification.action';
 
 interface Props {}
 
@@ -74,6 +76,12 @@ const TabNav = (props: Props) => {
   const user = useSelector<RootState>((state) => state.user) as IUserState;
   // NAVIGATION
   const navigation = useNavigation<TabStackProps['navigation']>();
+  const [unseen, setUnseen] = useState(0);
+
+  const onHandleCountUnseen = async () => {
+    const count = (await dispatch(getCountUnseen(user.id))) as any as number;
+    setUnseen(count);
+  };
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -102,19 +110,21 @@ const TabNav = (props: Props) => {
       }
     };
     getExpoToken();
+    onHandleCountUnseen();
     // This listener is fired whenever a notification is received while the app is foregrounded
     const notificationListener = Notifications.addNotificationReceivedListener(
-      (notification) => {
-        // console.log(
-        //   '🚀 ~ file: TabNav.tsx ~ line 108 ~ useEffect ~ notification',
-        //   notification
-        // );
-      }
+      (notification) => {}
     );
+    const getStatusNoti = async () => {
+      await dispatch(setDiagnosisStatus());
+    };
     // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
     const responseListener =
       Notifications.addNotificationResponseReceivedListener((response) => {
         const { data }: any = response.notification.request.content;
+        // Get New Data if User still in PatientDetail
+        // TODO: Update Notification Right here
+        getStatusNoti();
         navigation.navigate('Patient', {
           screen: 'PatientDetail',
           params: { patientId: data.patientId },
@@ -176,7 +186,7 @@ const TabNav = (props: Props) => {
                       }}
                       colorScheme="success"
                     >
-                      20
+                      {unseen}
                     </Badge>
                   )}
                 </Box>

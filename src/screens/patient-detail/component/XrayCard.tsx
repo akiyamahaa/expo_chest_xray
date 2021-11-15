@@ -32,30 +32,25 @@ const XrayCard = (props: Props) => {
   } = {
     atypicalAppearance: {
       name: 'Atypical',
-      value: atypicalAppearance,
+      value: atypicalAppearance || 0,
       color: max_value === atypicalAppearance ? 'red.700' : '#000',
     },
     indeterminateAppearance: {
       name: 'Indeterminate',
-      value: indeterminateAppearance,
+      value: indeterminateAppearance || 0,
       color: max_value === indeterminateAppearance ? 'red.700' : '#000',
     },
     negativePneumonia: {
       name: 'Negative Pneumonia',
-      value: negativePneumonia,
+      value: negativePneumonia || 0,
       color: max_value === negativePneumonia ? 'red.700' : '#000',
     },
     typicalAppearance: {
       name: 'Typical',
-      value: typicalAppearance,
+      value: typicalAppearance || 0,
       color: max_value === typicalAppearance ? 'red.700' : '#000',
     },
   };
-
-  console.log(
-    '🚀 ~ file: XrayCard.tsx ~ line 20 ~ XrayCard ~ symptom_list',
-    symptom_list
-  );
 
   return (
     <TouchableOpacity onPress={onPress}>

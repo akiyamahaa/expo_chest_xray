@@ -20,12 +20,16 @@ import axios from 'axios';
 import getEnvVars from 'redux/enviroment';
 import { getXrayDiagnosis, getXrayImage } from 'redux/actions/xray.action';
 import { IXrayInput } from 'utils/interfaces/xrayInput.interface';
+import { IXrayDiagnosisState } from 'redux/reducers/xrayDiagnosis.reducer';
 
 interface Props {}
 const { API_BASE_URL } = getEnvVars();
 const PatientDetail = (props: Props) => {
   // REDUX
   const user = useSelector<RootState>((state) => state.user) as IUserState;
+  const xrayDiagnosis = useSelector<RootState>(
+    (state) => state.xrayDiagnosis
+  ) as IXrayDiagnosisState;
   // DISPATCH
   const dispatch = useDispatch();
   const navigation = useNavigation<PatientStackProps['navigation']>();
@@ -54,26 +58,44 @@ const PatientDetail = (props: Props) => {
       }),
       {}
     );
-    const xray_diagnosis: any = await Promise.all(
-      xray_result.map((xray_item) => dispatch(getXrayDiagnosis(xray_item.id)))
-    );
-    // Add info diagnosis to xray obj
-    const input_diagnosis_obj: any = xray_diagnosis.reduce(
-      (obj: any, current: any) => {
-        if (xray_obj[current[0].id]) {
-          return {
-            ...obj,
-            [current[0].id]: {
-              ...xray_obj[current[0].id],
-              ...current[0],
-            },
-          };
-        }
-      },
-      xray_obj
-    );
-    setListXray(input_diagnosis_obj);
+    if (Object.keys(xray_obj).length) {
+      const diagnosis_obj = await onGetXrayDiagnosis(xray_obj);
+      if (diagnosis_obj) {
+        setListXray(diagnosis_obj);
+      } else {
+        setListXray(xray_obj);
+      }
+    }
   };
+
+  const onGetXrayDiagnosis = async (xray_obj: any) => {
+    const xray_diagnosis: any = await Promise.all(
+      Object.keys(xray_obj).map((xray_id) =>
+        dispatch(getXrayDiagnosis(Number(xray_id)))
+      )
+    );
+    // TODO: FIX when not get diagnosis
+    if (xray_diagnosis.length) {
+      const input_diagnosis_obj: any = xray_diagnosis.reduce(
+        (obj: any, current: any) => {
+          if (current && xray_obj[current.xrayInputId]) {
+            return {
+              ...obj,
+              [current.xrayInputId]: {
+                ...xray_obj[current.xrayInputId],
+                ...current,
+              },
+            };
+          }
+          // if current is null return obj
+          return obj;
+        },
+        xray_obj
+      );
+      return input_diagnosis_obj;
+    }
+  };
+
   const getInfoPatient = async () => {
     const profile = (await dispatch(getProfileById(patientId))) as any;
     setPatient(profile.patient);
@@ -145,7 +167,6 @@ const PatientDetail = (props: Props) => {
       onGetXrayInput();
       getInfoPatient();
     });
-
     return unsubscribe;
   }, [navigation, image]);
 
@@ -159,7 +180,7 @@ const PatientDetail = (props: Props) => {
     return () => {
       isUnMount = true;
     };
-  }, [image]);
+  }, [image, xrayDiagnosis.isGetNewStatus]);
 
   return (
     <SafeAreaView>
@@ -207,22 +228,31 @@ const PatientDetail = (props: Props) => {
               width="100%"
               mb="5"
               justifyContent="space-between"
+              flexWrap="wrap"
             >
               <Button width="45%" colorScheme="teal" onPress={captureImage}>
                 Chụp ảnh
               </Button>
-              <Button width="45%" onPress={pickImage}>
+              <Button width="45%" colorScheme="teal" onPress={pickImage}>
                 Tải ảnh
               </Button>
             </Button.Group>
+            {/* <Button
+              width="100%"
+              colorScheme="teal"
+              onPress={onGetXrayDiagnosis}
+            >
+              Lấy chuẩn đoán
+            </Button> */}
           </Box>
           {/* List Card Result */}
-          <Box width="90%">
-            {Object.keys(listXray).map((item: any) => (
-              <Box mb="4" key={item}>
-                <XrayCard onPress={activeModal} data={listXray[item]} />
-              </Box>
-            ))}
+          <Box width="90%" mt="5">
+            {Object.keys(listXray).length > 0 &&
+              Object.keys(listXray).map((item: any) => (
+                <Box mb="4" key={item}>
+                  <XrayCard onPress={activeModal} data={listXray[item]} />
+                </Box>
+              ))}
           </Box>
         </ContainerLayout>
       </ScrollView>
