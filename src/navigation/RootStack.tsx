@@ -33,12 +33,12 @@ const RootStack = (props: Props) => {
             password: decoded_info.password,
           })
         );
-        navigation.navigate('TabStack');
+        navigation.navigate('TabStack', { screen: 'Home' });
       } else {
         navigation.navigate('AuthStack');
       }
     };
-    checkAuth();
+    // checkAuth();
   }, []);
 
   return (

@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { StatusBar } from 'expo-status-bar';
-import { NativeBaseProvider } from 'native-base';
-import { Platform, StyleSheet } from 'react-native';
+import { Box, NativeBaseProvider } from 'native-base';
+import { Platform, StyleSheet, Text } from 'react-native';
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { Provider } from 'react-redux';
 import store from 'redux/stores';
@@ -13,7 +13,6 @@ import RootStack from 'navigation/RootStack';
 import moment from 'moment';
 // UPDATE MOMENT
 moment.updateLocale('vi', null);
-
 
 const MyTheme = {
   ...DefaultTheme,

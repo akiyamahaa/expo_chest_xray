@@ -39,19 +39,12 @@ const HomeScreen = (props: Props) => {
   };
 
   useEffect(() => {
-
-    const subscribe = navigation.addListener('focus', () => {
+    const unsubscribe = navigation.addListener('focus', () => {
       onGetStats();
     });
 
-    const unsubscribe = navigation.addListener('blur', () => {
-      setStats({ total: 0, progress: 0, completed: 0 });
-    });
-
-    return () => {
-      subscribe();
-    };
-  }, [navigation,user.id]);
+    return unsubscribe;
+  }, [navigation, user.id]);
 
   return (
     <Box style={{}}>

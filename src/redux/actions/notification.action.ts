@@ -26,7 +26,7 @@ export enum GetCountUnseenKeys {
 
 export const getCountUnseen = (doctorId: number) => (dispatch: Dispatch) =>
   dispatchApi(dispatch, {
-    types: Object.keys(GetNotificationByDoctorKeys),
+    types: Object.keys(GetCountUnseenKeys),
     method: 'get',
     endpoint: `/notifications/unseen`,
     body: {
@@ -43,7 +43,7 @@ export enum UpdateNotiKeys {
 export const updateNotificationById =
   (notiData: IUpdateNoti, notiId: number) => (dispatch: Dispatch) =>
     dispatchApi(dispatch, {
-      types: Object.keys(GetNotificationByDoctorKeys),
+      types: Object.keys(UpdateNotiKeys),
       method: 'put',
       endpoint: `/notifications/${notiId}`,
       body: {

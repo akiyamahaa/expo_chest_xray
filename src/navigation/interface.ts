@@ -10,14 +10,6 @@ export type PatientStackParamList = {
 
 export type PatientStackProps = NativeStackScreenProps<PatientStackParamList>;
 
-export type RootStackParamList = {
-  AuthStack: undefined;
-  TabStack: undefined;
-  Loading: undefined;
-};
-
-export type RootStackProps = NativeStackScreenProps<RootStackParamList>;
-
 export type TabParamList = {
   Home: undefined;
   Patient: NavigatorScreenParams<PatientStackParamList>;
@@ -26,3 +18,11 @@ export type TabParamList = {
 };
 
 export type TabStackProps = BottomTabScreenProps<TabParamList>;
+
+export type RootStackParamList = {
+  AuthStack: undefined;
+  TabStack: NavigatorScreenParams<TabParamList>;
+  Loading: undefined;
+};
+
+export type RootStackProps = NativeStackScreenProps<RootStackParamList>;

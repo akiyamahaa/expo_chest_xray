@@ -5,7 +5,10 @@ import Header from 'components/Header';
 import NotiCard from './component/NotiCard';
 import { useNavigation } from '@react-navigation/core';
 import { useDispatch, useSelector } from 'react-redux';
-import { getNotificationById } from 'redux/actions/notification.action';
+import {
+  getCountUnseen,
+  getNotificationById,
+} from 'redux/actions/notification.action';
 import { RootState } from 'redux/stores';
 import { IUserState } from 'redux/reducers/user.reducer';
 import { INotification } from 'utils/interfaces/notification.interface';
@@ -24,6 +27,7 @@ const NotificationScreen = (props: Props) => {
     const listNotiResult = (await dispatch(
       getNotificationById(user.id)
     )) as any as INotification[];
+    await dispatch(getCountUnseen(user.id));
 
     setListNoti(listNotiResult);
   };

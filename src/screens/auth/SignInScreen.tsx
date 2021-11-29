@@ -80,7 +80,7 @@ const SignInScreen = (props: Props) => {
     );
     if (login_result) {
       await AsyncStorage.setItem(AUTH_TOKEN, login_result.token);
-      navigation.navigate('TabStack');
+      navigation.navigate('TabStack', { screen: 'Home' });
     } else {
       fadeInText();
     }

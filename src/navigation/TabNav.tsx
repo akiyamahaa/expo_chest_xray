@@ -19,6 +19,7 @@ import { useNavigation } from '@react-navigation/core';
 import { TabStackProps } from './interface';
 import { setDiagnosisStatus } from 'redux/actions/xrayDiagnosis.action';
 import { getCountUnseen } from 'redux/actions/notification.action';
+import { INotificationState } from 'redux/reducers/notification.reducer';
 
 interface Props {}
 
@@ -74,14 +75,12 @@ const TabNav = (props: Props) => {
   const [isKeyboardVisible, setKeyboardVisible] = useState(false);
   // REDUX
   const user = useSelector<RootState>((state) => state.user) as IUserState;
+  const { unseen } = useSelector<RootState>(
+    (state) => state.notification
+  ) as INotificationState;
+
   // NAVIGATION
   const navigation = useNavigation<TabStackProps['navigation']>();
-  const [unseen, setUnseen] = useState(0);
-
-  const onHandleCountUnseen = async () => {
-    const count = (await dispatch(getCountUnseen(user.id))) as any as number;
-    setUnseen(count);
-  };
 
   useEffect(() => {
     const keyboardDidShowListener = Keyboard.addListener(
@@ -110,10 +109,11 @@ const TabNav = (props: Props) => {
       }
     };
     getExpoToken();
-    onHandleCountUnseen();
     // This listener is fired whenever a notification is received while the app is foregrounded
     const notificationListener = Notifications.addNotificationReceivedListener(
-      (notification) => {}
+      (notification) => {
+        dispatch(getCountUnseen(user.id));
+      }
     );
     const getStatusNoti = async () => {
       await dispatch(setDiagnosisStatus());
@@ -130,7 +130,6 @@ const TabNav = (props: Props) => {
           params: { patientId: data.patientId },
         });
       });
-
     return () => {
       Notifications.removeNotificationSubscription(notificationListener);
       Notifications.removeNotificationSubscription(responseListener);
@@ -138,6 +137,7 @@ const TabNav = (props: Props) => {
       keyboardDidShowListener.remove();
     };
   }, []);
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -173,16 +173,16 @@ const TabNav = (props: Props) => {
                     style={{ width: 32, height: 32 }}
                     alt="image-icon"
                   />
-                  {index == 2 && (
+                  {index == 2 && unseen > 0 && (
                     <Badge
                       style={{
-                        borderRadius: 15,
+                        borderRadius: 30,
                         height: 30,
                         justifyContent: 'center',
                         alignItems: 'center',
                         position: 'absolute',
-                        right: -14,
-                        top: -10,
+                        right: -10,
+                        top: -6,
                       }}
                       colorScheme="success"
                     >
