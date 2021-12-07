@@ -1,5 +1,5 @@
 import { Box, Text } from 'native-base';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { StyleSheet } from 'react-native';
 import { VictoryBar, VictoryChart } from 'victory-native';
 import Colors from 'utils/Colors';
@@ -8,7 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { getStatsCares } from 'redux/actions/care.action';
 import { RootState } from 'redux/stores';
 import { IUserState } from 'redux/reducers/user.reducer';
-import { useNavigation } from '@react-navigation/core';
+import { useFocusEffect, useNavigation } from '@react-navigation/core';
 import { ICare } from 'utils/interfaces/care.interface';
 
 interface Props {}
@@ -21,7 +21,6 @@ const StatisChartHome = (props: Props) => {
   const user = useSelector<RootState>((state) => state.user) as IUserState;
   // HOOKS
   const dispatch = useDispatch();
-  const navigation = useNavigation();
   const categoriesMonth = [
     getMonthName(5),
     getMonthName(4),
@@ -37,19 +36,17 @@ const StatisChartHome = (props: Props) => {
     setStats(result);
   };
 
-  useEffect(() => {
-    const subscribe = navigation.addListener('focus', () => {
-      onHandleGetStatsCare();
-    });
-
-    const unsubscribe = navigation.addListener('blur', () => {
-      setStats({});
-    });
-
-    return () => {
-      subscribe();
-    };
-  }, [navigation, user.id]);
+  useFocusEffect(
+    useCallback(() => {
+      let isMount = true;
+      if (isMount) {
+        onHandleGetStatsCare();
+      }
+      return () => {
+        isMount = false;
+      };
+    }, [user.id])
+  );
 
   const dataChart = categoriesMonth.map((month) => ({
     x: month,

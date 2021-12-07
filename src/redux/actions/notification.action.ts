@@ -8,15 +8,16 @@ export enum GetNotificationByDoctorKeys {
   GET_NOTIFICATION_FAILURE = 'GET_NOTIFICATION_FAILURE',
 }
 
-export const getNotificationById = (doctorId: number) => (dispatch: Dispatch) =>
-  dispatchApi(dispatch, {
-    types: Object.keys(GetNotificationByDoctorKeys),
-    method: 'get',
-    endpoint: `/notifications`,
-    body: {
-      params: doctorId,
-    },
-  });
+export const getNotificationById =
+  (doctorId: number, page: number) => (dispatch: Dispatch) =>
+    dispatchApi(dispatch, {
+      types: Object.keys(GetNotificationByDoctorKeys),
+      method: 'get',
+      endpoint: `/notifications`,
+      body: {
+        params: { doctorId, page },
+      },
+    });
 
 export enum GetCountUnseenKeys {
   GET_COUNT_UNSEEN_REQ = 'GET_COUNT_UNSEEN_REQ',

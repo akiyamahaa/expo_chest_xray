@@ -9,7 +9,7 @@ import { Fontisto } from '@expo/vector-icons';
 import moment from 'moment';
 import ContainerLayout from 'components/ContainerLayout';
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigation } from '@react-navigation/core';
+import { useFocusEffect, useNavigation } from '@react-navigation/core';
 import { getPatientsByDate } from 'redux/actions/care.action';
 import { RootState } from 'redux/stores';
 import { IUserState } from 'redux/reducers/user.reducer';
@@ -40,21 +40,18 @@ const PatientInfoList = (props: Props) => {
     setListPatient(list);
   };
 
-  useEffect(() => {
-    const subscribe = navigation.addListener('focus', () => {
-      onHandleGetPatients(date, user.id);
-    });
-
-    const unsubscribe = navigation.addListener('blur', () => {
-      setListPatient([]);
-      setDate(new Date());
-    });
-
-    return () => {
-      subscribe();
-    };
-    // add two params to prevent get data from previous user_id
-  }, [navigation, user.id]);
+  useFocusEffect(
+    React.useCallback(() => {
+      let isMount = true;
+      if (isMount) {
+        onHandleGetPatients(date, user.id);
+      }
+      return () => {
+        isMount = false;
+      };
+      //  add user_id params to prevent get data from previous user_id
+    }, [user.id])
+  );
 
   useEffect(() => {
     onHandleGetPatients(date, user.id);

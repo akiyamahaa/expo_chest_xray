@@ -11,3 +11,10 @@ export const ConvertStatus: { [key: string]: string } = {
   [EStatus.IN_PROGRESS]: 'Đang xử lý',
   [EStatus.COMPLETED]: 'Đã xong',
 };
+
+export enum ESickStatus {
+  ATYPICAL = 'atypical',
+  INDETERMINATE = 'indeterminate',
+  NEGATIVEPNEUMONIA = 'negativePneumonia',
+  TYPICAL = 'typical',
+}

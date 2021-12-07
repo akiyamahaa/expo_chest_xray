@@ -82,61 +82,61 @@ const TabNav = (props: Props) => {
   // NAVIGATION
   const navigation = useNavigation<TabStackProps['navigation']>();
 
-  useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener(
-      'keyboardDidShow',
-      () => {
-        setKeyboardVisible(true); // or some other action
-      }
-    );
-    const keyboardDidHideListener = Keyboard.addListener(
-      'keyboardDidHide',
-      () => {
-        setKeyboardVisible(false); // or some other action
-      }
-    );
-    const getExpoToken = async () => {
-      const expoPushToken = await AsyncStorage.getItem(EXPO_TOKEN);
-      if (!expoPushToken) {
-        const token: any = await registerForPushNotificationsAsync();
-        await AsyncStorage.setItem(EXPO_TOKEN, token);
-        const deviceData = {
-          doctorId: user.id,
-          token,
-        };
-        console.log(deviceData);
-        await dispatch(createDevice(deviceData));
-      }
-    };
-    getExpoToken();
-    // This listener is fired whenever a notification is received while the app is foregrounded
-    const notificationListener = Notifications.addNotificationReceivedListener(
-      (notification) => {
-        dispatch(getCountUnseen(user.id));
-      }
-    );
-    const getStatusNoti = async () => {
-      await dispatch(setDiagnosisStatus());
-    };
-    // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
-    const responseListener =
-      Notifications.addNotificationResponseReceivedListener((response) => {
-        const { data }: any = response.notification.request.content;
-        // Get New Data if User still in PatientDetail
-        // TODO: Update Notification Right here
-        getStatusNoti();
-        navigation.navigate('Patient', {
-          screen: 'PatientDetail',
-          params: { patientId: data.patientId },
-        });
-      });
-    return () => {
-      Notifications.removeNotificationSubscription(notificationListener);
-      Notifications.removeNotificationSubscription(responseListener);
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
-    };
-  }, []);
+  // useEffect(() => {
+  //   const keyboardDidShowListener = Keyboard.addListener(
+  //     'keyboardDidShow',
+  //     () => {
+  //       setKeyboardVisible(true); // or some other action
+  //     }
+  //   );
+  //   const keyboardDidHideListener = Keyboard.addListener(
+  //     'keyboardDidHide',
+  //     () => {
+  //       setKeyboardVisible(false); // or some other action
+  //     }
+  //   );
+  //   const getExpoToken = async () => {
+  //     const expoPushToken = await AsyncStorage.getItem(EXPO_TOKEN);
+  //     if (!expoPushToken) {
+  //       const token: any = await registerForPushNotificationsAsync();
+  //       await AsyncStorage.setItem(EXPO_TOKEN, token);
+  //       const deviceData = {
+  //         doctorId: user.id,
+  //         token,
+  //       };
+  //       console.log(deviceData);
+  //       await dispatch(createDevice(deviceData));
+  //     }
+  //   };
+  //   getExpoToken();
+  //   // This listener is fired whenever a notification is received while the app is foregrounded
+  //   const notificationListener = Notifications.addNotificationReceivedListener(
+  //     (notification) => {
+  //       dispatch(getCountUnseen(user.id));
+  //     }
+  //   );
+  //   const getStatusNoti = async () => {
+  //     await dispatch(setDiagnosisStatus());
+  //   };
+  //   // This listener is fired whenever a user taps on or interacts with a notification (works when app is foregrounded, backgrounded, or killed)
+  //   const responseListener =
+  //     Notifications.addNotificationResponseReceivedListener((response) => {
+  //       const { data }: any = response.notification.request.content;
+  //       // Get New Data if User still in PatientDetail
+  //       // TODO: Update Notification Right here
+  //       getStatusNoti();
+  //       navigation.navigate('Patient', {
+  //         screen: 'PatientDetail',
+  //         params: { patientId: data.patientId },
+  //       });
+  //     });
+  //   return () => {
+  //     Notifications.removeNotificationSubscription(notificationListener);
+  //     Notifications.removeNotificationSubscription(responseListener);
+  //     keyboardDidHideListener.remove();
+  //     keyboardDidShowListener.remove();
+  //   };
+  // }, []);
 
   return (
     <Tab.Navigator
@@ -150,6 +150,7 @@ const TabNav = (props: Props) => {
           left: 12,
           borderRadius: 16,
         },
+        unmountOnBlur: true,
       }}
       initialRouteName="Home"
     >

@@ -38,7 +38,7 @@ const RootStack = (props: Props) => {
         navigation.navigate('AuthStack');
       }
     };
-    // checkAuth();
+    checkAuth();
   }, []);
 
   return (

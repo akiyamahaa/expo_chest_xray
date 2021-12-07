@@ -21,13 +21,15 @@ const NotiCard = (props: Props) => {
   const dispatch = useDispatch();
 
   const onHandlePressNoti = async () => {
-    const notiData = {
-      doctorId: data.doctorId,
-      patientId: data.patientId,
-      content: data.content,
-      status: NotiStatus.SEEN,
-    };
-    await dispatch(updateNotificationById(notiData, data.id));
+    if (data.status === NotiStatus.UNSEEN) {
+      const notiData = {
+        doctorId: data.doctorId,
+        patientId: data.patientId,
+        content: data.content,
+        status: NotiStatus.SEEN,
+      };
+      await dispatch(updateNotificationById(notiData, data.id));
+    }
     navigation.navigate('Patient', {
       screen: 'PatientDetail',
       params: { patientId: data.patientId },

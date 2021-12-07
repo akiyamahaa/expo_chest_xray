@@ -1,9 +1,9 @@
 const ENV = {
   dev: {
-    API_BASE_URL: 'http://192.168.10.31:3000'
+    API_BASE_URL: 'http://192.168.10.94:3000'
   },
   prod: {
-    API_BASE_URL: 'http://192.168.10.31:3000'
+    API_BASE_URL: 'http://192.168.10.94:3000'
   }
 };
 

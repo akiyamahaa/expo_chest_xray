@@ -35,16 +35,13 @@ const PatientDetail = (props: Props) => {
   const navigation = useNavigation<PatientStackProps['navigation']>();
   const route = useRoute<any>();
   // STATE
-  const [showModal, setShowModal] = useState(false);
   const [image, setImage] = useState(false);
   const [patient, setPatient] = useState<IPatient>({} as IPatient);
   const [listXray, setListXray] = useState<any>({});
   // GET PARAMS
   const patientId = route.params.patientId || '';
 
-  const activeModal = () => {
-    setShowModal(true);
-  };
+  const activeModal = () => {};
 
   const onGetXrayInput = async () => {
     const xray_result: IXrayInput[] = (await dispatch(
@@ -82,8 +79,8 @@ const PatientDetail = (props: Props) => {
             return {
               ...obj,
               [current.xrayInputId]: {
-                ...xray_obj[current.xrayInputId],
                 ...current,
+                ...xray_obj[current.xrayInputId],
               },
             };
           }
@@ -184,15 +181,12 @@ const PatientDetail = (props: Props) => {
 
   return (
     <SafeAreaView>
-      {showModal && (
-        <ResultXray showModal={showModal} setShowModal={setShowModal} />
-      )}
+      <Header
+        title="Thông tin bệnh nhân"
+        showBackBtn={true}
+        onPress={() => navigation.goBack()}
+      />
       <ScrollView>
-        <Header
-          title="Thông tin bệnh nhân"
-          showBackBtn={true}
-          onPress={() => navigation.goBack()}
-        />
         <ContainerLayout>
           {/* Common Info about Patient */}
           <Box style={{ width: '90%' }} p="4">
@@ -250,7 +244,7 @@ const PatientDetail = (props: Props) => {
             {Object.keys(listXray).length > 0 &&
               Object.keys(listXray).map((item: any) => (
                 <Box mb="4" key={item}>
-                  <XrayCard onPress={activeModal} data={listXray[item]} />
+                  <XrayCard data={listXray[item]} />
                 </Box>
               ))}
           </Box>

@@ -1,16 +1,18 @@
 import { Box, Image, Text } from 'native-base';
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet, TouchableOpacity } from 'react-native';
 import getEnvVars from 'redux/enviroment';
 import Colors from 'utils/Colors';
+import { ESickStatus } from 'utils/constants';
+import ResultXray from './ResultXray';
 
 interface Props {
-  onPress: () => void;
   data: any;
 }
 const { API_BASE_URL } = getEnvVars();
 const XrayCard = (props: Props) => {
-  const { onPress, data } = props;
+  const { data } = props;
+  const [showModal, setShowModal] = useState(false);
   const {
     atypicalAppearance,
     indeterminateAppearance,
@@ -23,67 +25,51 @@ const XrayCard = (props: Props) => {
     negativePneumonia,
     typicalAppearance
   );
-  const symptom_list: {
-    [key: string]: {
-      name: string;
-      value: number;
-      color: string;
-    };
-  } = {
-    atypicalAppearance: {
-      name: 'Atypical',
-      value: atypicalAppearance || 0,
-      color: max_value === atypicalAppearance ? 'red.700' : '#000',
-    },
-    indeterminateAppearance: {
-      name: 'Indeterminate',
-      value: indeterminateAppearance || 0,
-      color: max_value === indeterminateAppearance ? 'red.700' : '#000',
-    },
-    negativePneumonia: {
-      name: 'Negative Pneumonia',
-      value: negativePneumonia || 0,
-      color: max_value === negativePneumonia ? 'red.700' : '#000',
-    },
-    typicalAppearance: {
-      name: 'Typical',
-      value: typicalAppearance || 0,
-      color: max_value === typicalAppearance ? 'red.700' : '#000',
-    },
+
+  const getSickName = (value: number) => {
+    switch (value) {
+      case atypicalAppearance:
+        return ESickStatus.ATYPICAL;
+      case indeterminateAppearance:
+        return ESickStatus.INDETERMINATE;
+      case negativePneumonia:
+        return ESickStatus.NEGATIVEPNEUMONIA;
+      case typicalAppearance:
+        return ESickStatus.TYPICAL;
+    }
   };
 
   return (
-    <TouchableOpacity onPress={onPress}>
-      <Box style={styles.root}>
-        <Box style={styles.imageStyle}>
-          <Image
-            source={{
-              uri: `${API_BASE_URL}/uploads/${data.filepath}`,
-            }}
-            alt="image-xray"
-            style={styles.imageStyle}
-          />
-        </Box>
-        <Box flexDirection="row" justifyContent="space-between" flexWrap="wrap">
-          {Object.keys(symptom_list).map((item) => (
-            <Box
-              p="4"
-              alignItems="center"
-              key={item}
-              width="50%"
-              borderWidth={0.5}
-            >
-              <Text fontSize={14} bold>
-                {symptom_list[item].name}
+    <>
+      {showModal && (
+        <ResultXray
+          showModal={showModal}
+          setShowModal={setShowModal}
+          resultName={getSickName(max_value)}
+        />
+      )}
+      <TouchableOpacity onPress={() => setShowModal(true)}>
+        <Box style={styles.root}>
+          <Box style={styles.imageStyle}>
+            <Image
+              source={{
+                uri: `${API_BASE_URL}/uploads/${data.filepath}`,
+              }}
+              alt="image-xray"
+              style={styles.imageStyle}
+            />
+          </Box>
+          <Box padding={4} alignItems="center">
+            <Text fontSize={20}>
+              Kết quả chẩn đoán :{' '}
+              <Text bold textTransform="uppercase">
+                {getSickName(max_value)}
               </Text>
-              <Text fontSize={16} color={symptom_list[item].color}>
-                {symptom_list[item].value}
-              </Text>
-            </Box>
-          ))}
+            </Text>
+          </Box>
         </Box>
-      </Box>
-    </TouchableOpacity>
+      </TouchableOpacity>
+    </>
   );
 };
 
